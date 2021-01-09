@@ -121,6 +121,7 @@ enum class Code : byte
 	KING = 6,
 };
 
+/* Represents piece's color */
 enum class Color : byte
 {
 	WHITE = 0b1000'0000,
@@ -160,18 +161,18 @@ enum class Piece : byte
 	BLACK_QUEEN =     toByte(Code::QUEEN)      | toByte(Color::BLACK),
 	BLACK_KING =      toByte(Code::KING)       | toByte(Color::BLACK),
 	
-	MOVED_WHITE_PAWN = toByte(WHITE_PAWN) | 0b0100'0000, /* Make gdb recognize moved figures */
-	MOVED_WHITE_ROOK = toByte(WHITE_ROOK) | 0b0100'0000,
-	MOVED_WHITE_KNIGHT = toByte(WHITE_KNIGHT) | 0b0100'0000,
-	MOVED_WHITE_BISHOP = toByte(WHITE_BISHOP) | 0b0100'0000,
-	MOVED_WHITE_QUEEN = toByte(WHITE_QUEEN) | 0b0100'0000,
-	MOVED_WHITE_KING = toByte(WHITE_KING) | 0b0100'0000,
-	MOVED_BLACK_PAWN = toByte(BLACK_PAWN) | 0b0100'0000,
-	MOVED_BLACK_ROOK = toByte(BLACK_ROOK) | 0b0100'0000,
-	MOVED_BLACK_KNIGHT = toByte(BLACK_KNIGHT) | 0b0100'0000,
-	MOVED_BLACK_BISHOP = toByte(BLACK_BISHOP) | 0b0100'0000,
-	MOVED_BLACK_QUEEN = toByte(BLACK_QUEEN) | 0b0100'0000,
-	MOVED_BLACK_KING = toByte(BLACK_KING) | 0b0100'0000,
+	MOVED_WHITE_PAWN = toByte(WHITE_PAWN)      | 0b0100'0000, /* Make gdb recognize moved figures */
+	MOVED_WHITE_ROOK = toByte(WHITE_ROOK)      | 0b0100'0000,
+	MOVED_WHITE_KNIGHT = toByte(WHITE_KNIGHT)  | 0b0100'0000,
+	MOVED_WHITE_BISHOP = toByte(WHITE_BISHOP)  | 0b0100'0000,
+	MOVED_WHITE_QUEEN = toByte(WHITE_QUEEN)    | 0b0100'0000,
+	MOVED_WHITE_KING = toByte(WHITE_KING)      | 0b0100'0000,
+	MOVED_BLACK_PAWN = toByte(BLACK_PAWN)      | 0b0100'0000,
+	MOVED_BLACK_ROOK = toByte(BLACK_ROOK)      | 0b0100'0000,
+	MOVED_BLACK_KNIGHT = toByte(BLACK_KNIGHT)  | 0b0100'0000,
+	MOVED_BLACK_BISHOP = toByte(BLACK_BISHOP)  | 0b0100'0000,
+	MOVED_BLACK_QUEEN = toByte(BLACK_QUEEN)    | 0b0100'0000,
+	MOVED_BLACK_KING = toByte(BLACK_KING)      | 0b0100'0000,
 };
 
 template<typename T>
@@ -182,57 +183,84 @@ inline constexpr T get(Piece) noexcept
 	return T{};
 }
 
+/**
+ * Get piece's code.
+ */
 template<>
 inline constexpr Code get<Code>(Piece piece) noexcept
 {
 	return static_cast<Code>(toByte(piece) & 7);
 }
-
+/**
+ * Get piece's color.
+ */
 template<>
 inline constexpr Color get<Color>(Piece piece) noexcept
 {
 	return static_cast<Color>(toByte(piece) & toByte(Color::WHITE));
 }
 
+/**
+ * Check whether piece is white.
+ */
 inline constexpr bool isWhite(Piece piece)
 {
 	if (piece == Piece::EMPTY)
 		return false;
 	return get<Color>(piece) == Color::WHITE;
 }
-
+/**
+ * Check whether piece is white.
+ */
 inline constexpr bool isBlack(Piece piece) noexcept
 {
 	if (piece == Piece::EMPTY)
 		return false;
 	return get<Color>(piece) == Color::BLACK;
 }
-
+/**
+ * Check whether piece is pawn.
+ */
 [[nodiscard]]
 inline constexpr bool isPawn(Piece piece) noexcept
 {
 	return get<Code>(piece) == Code::PAWN;
 }
+/**
+ * Check whether piece is rook.
+ */
 [[nodiscard]]
 inline constexpr bool isRook(Piece piece) noexcept
 {
 	return get<Code>(piece) == Code::ROOK;
 }
+/**
+ * Check whether piece is knight.
+ */
 [[nodiscard]]
 inline constexpr bool isKnight(Piece piece) noexcept
 {
 	return get<Code>(piece) == Code::KNIGHT;
 }
+/**
+ * Check whether piece is bishop.
+ */
 [[nodiscard]]
 inline constexpr bool isBishop(Piece piece) noexcept
 {
 	return get<Code>(piece) == Code::BISHOP;
 }
+/**
+ * Check whether piece is queen.
+ */
 [[nodiscard]]
 inline constexpr bool isQueen(Piece piece) noexcept
 {
 	return get<Code>(piece) == Code::QUEEN;
 }
+/**
+ * Check whether piece is king.
+ */
 [[nodiscard]]
 inline constexpr bool isKing(Piece piece) noexcept
 {
@@ -250,7 +278,9 @@ KAREN_DEFINE_PIECE_CHECKER(Black, Knight)
 KAREN_DEFINE_PIECE_CHECKER(Black, Bishop)
 KAREN_DEFINE_PIECE_CHECKER(Black, Queen)
 KAREN_DEFINE_PIECE_CHECKER(Black, King)
-
+/**
+ * Check whether piece is moved.
+ */
 [[nodiscard]]
 inline constexpr bool isMoved(Piece piece)
 {
