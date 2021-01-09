@@ -1,5 +1,6 @@
 # karen11
 Karen11 is lightweight chess engine written in C++17 for school project. She doesn't play very good but can beat a regular human.
+<br/>
 ![Karen in terminal](./assets/karen.png)
 
 ## Installation 
@@ -28,6 +29,7 @@ cmake --install .        # Requires cmake 3.15 or newer
 1. Install Karen.<br/>
 2. Launch Karen in command prompt.<br/>
 3. Play!<br/>
+<br/>
 ![Play with unicode output](./assets/play.png)
 
 ## License
