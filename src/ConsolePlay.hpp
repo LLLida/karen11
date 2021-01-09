@@ -21,7 +21,10 @@
 
 namespace karen11
 {
-	
+
+/**
+ * Interacts with via text user interface.
+ */
 class ConsolePlay final : public Play
 {
 public:
@@ -36,9 +39,18 @@ public:
 	std::string messageBuffer;
 	std::mt19937 random;
 
+	/**
+	 * Print help to stdout.
+	 */
 	static void printHelp() noexcept;
+	/**
+	 * Print version to stdout.
+	 */
 	static void printVersion() noexcept;
 	static bool parseOptions(int argc, char** argv) noexcept;
+	/**
+	 * Print move history to `stream`.
+	 */
 	void printHistory(std::ostream& stream);
 
 private:
@@ -58,5 +70,5 @@ private:
 	bool moved = false;
 };
 
-}
+} /* namespace karen11 */
 

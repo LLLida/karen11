@@ -1,8 +1,8 @@
-# Brief
+# karen11
 Karen11 is lightweight chess engine written in C++17 for school project. She doesn't play very good but can beat a regular human.
 
 
-# Installation 
+## Installation 
 You'll need [cmake](https://cmake.org/) and [C++17 compiler](https://en.cppreference.com/w/cpp/compiler_support/17) to build the program.<br/>
 1. Clone the repository on your machine:<br/>
 ```bash
@@ -19,13 +19,17 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
+4. Install the program(_optional_):<br/>
+```bash
+cmake --install .        # Requires cmake 3.15 or higher
+```
 
-# Usage
+## Usage
 1. Install Karen.<br/>
 2. Launch Karen in command prompt.<br/>
 3. Play!<br/>
 
-# License
+## License
 Copyright (c) 2021 Adil Mokhammad<br/>
 `Karen` is made available under the terms of the GPLv3 license.<br/>
 See [license](https://www.gnu.org/licenses/gpl-3.0.en.html) for details.
