@@ -30,9 +30,23 @@ using std::cout;
 using std::cin;
 using namespace std::literals;
 
+#if defined(KAREN_ALWAYS_COLORED) || defined(__linux__) || defined(__linux) || defined(_WIN32)
 bool ConsolePlay::colored = true;
+#else
+	bool ConsolePlay::colored = false;
+#endif
+
+#if defined(KAREN_ALWAYS_COLORED) || defined(__linux__) || defined(__linux) || defined(_WIN32)
 bool ConsolePlay::clearScreen = true;
+#else
+bool ConsolePlay::clearScreen = false;
+#endif
+
+#if defined(KAREN_ALWAYS_COLORED) || defined(__linux__) || defined(__linux)
 bool ConsolePlay::useUnicode = true;
+#else
+bool ConsolePlay::useUnicode = false;
+#endif
 
 /* \033[0m - resets terminal mode(std::ostream manipulator) */
 static std::ostream& reset(std::ostream& out) noexcept
@@ -108,19 +122,17 @@ namespace bg
 }
 
 ConsolePlay::ConsolePlay()
-	: Play(promptSide())
-{
-}
+	: Play(promptSide()) {}
 
 ConsolePlay::~ConsolePlay() noexcept
 {
 	cout << reset << std::endl;
 }
 
-	bool ConsolePlay::renderBoard(Color)
-	{
-		clearTerminal();
-fillMessageBuffer();
+bool ConsolePlay::renderBoard(Color)
+{
+	clearTerminal();
+	fillMessageBuffer();
 	
 	const Board& board = engine().getBoard();
 	const bool w = playerSide == Color::WHITE;
@@ -201,8 +213,8 @@ fillMessageBuffer();
 										  "   H  G  F  E  D  C  B  A\n"sv);
 		
 		cout << reset
-		 << letters
-		 << " +-------------------------+\n";
+			 << letters
+			 << " +-------------------------+\n";
 		for (byte i = 0; i < 8; i++)
 		{
 			auto [square, beginLine, endLine] = perLine[i];
@@ -234,8 +246,8 @@ fillMessageBuffer();
 			cout << '\n';
 		}
 		cout << reset
-		 << " +-------------------------+\n"
-		 << letters;
+			 << " +-------------------------+\n"
+			 << letters;
 	}	
 	return false;
 }
@@ -276,12 +288,12 @@ bool ConsolePlay::inputMove(Move& move)
 		else if (s == "clearscreen")
 		{
 			clearScreen = !clearScreen;
-			cout << fg::green << "Colored output is now <" << (clearScreen ? "ON" : "OFF") << ">\n";
+			cout << fg::green << "Clearing screen is now <" << (clearScreen ? "ON" : "OFF") << ">\n";
 		}
 		else if (s == "unicode")
 		{
 			useUnicode = !useUnicode;
-			cout << fg::green << "Colored output is now <" << (useUnicode ? "ON" : "OFF") << ">\n";
+			cout << fg::green << "Unicode output is now <" << (useUnicode ? "ON" : "OFF") << ">\n";
 		}
 		else if (s == "help")
 		{
@@ -457,6 +469,52 @@ void ConsolePlay::printHistory(std::ostream& stream)
 	stream << fg::magenta << "End.\n";
 }
 
+
+bool ConsolePlay::parseOptions(int argc, char** argv) noexcept
+{
+	for (int i = 1; i < argc; i++)
+	{
+		std::string option = argv[i];
+		if (parseOption(option))
+			return true;
+	}
+	return false;
+}
+
+bool ConsolePlay::parseOption(const std::string& s) noexcept
+{
+	if (s == "--version")
+	{
+		printVersion();
+		return true;
+	}
+	if (s == "--help")
+	{
+		printHelp();
+		return true;
+	}
+	if (s.find("--color") != s.npos)
+	{
+		if (s.find("OFF") != s.npos) colored = false;
+		else colored = true;
+		return false;
+	}
+	if (s.find("--unicode") != s.npos)
+	{
+		if (s.find("OFF") != s.npos) useUnicode = false;
+		else useUnicode = true;
+		return false;
+	}
+	if (s.find("--clearscreen") != s.npos)
+	{
+		if (s.find("OFF") != s.npos) clearScreen = false;
+		else clearScreen = true;
+		return false;
+	}
+	std::cout << fg::red << "Unrecognized option '" << s << "'.\n" << reset;
+    return true;
+}
+
 void ConsolePlay::printVersion() noexcept
 {
 	std::cout << "Karen version is "
@@ -493,7 +551,7 @@ options:
     --clearscreen={ON|OFF}   Enables clearing terminal after every move.
     --unicode={ON|OFF}       Enables unicode symbols output.
 
-commands(when Karen asks you to input move):
+commands(type them when Karen asks you to input move):
     version                  Prints karen's version.
     help                     Prints this message.
     color                    Toggles colored output via ANSII escape sequences.

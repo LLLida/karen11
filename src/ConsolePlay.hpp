@@ -36,8 +36,9 @@ public:
 	std::string messageBuffer;
 	std::mt19937 random;
 
-	void printHelp() noexcept;
-	void printVersion() noexcept;
+	static void printHelp() noexcept;
+	static void printVersion() noexcept;
+	static bool parseOptions(int argc, char** argv) noexcept;
 	void printHistory(std::ostream& stream);
 
 private:
@@ -51,6 +52,8 @@ private:
 	static Color promptSide() noexcept;
 	static void clearTerminal() noexcept;
 	bool tryParse(std::string& s, Move& move) noexcept;
+	[[nodiscard]]
+	static bool parseOption(const std::string& s) noexcept;
 
 	bool moved = false;
 };

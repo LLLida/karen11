@@ -26,9 +26,6 @@
 #include <utility>
 #include <algorithm>
 #include <vector>
-#ifdef KAREN_ENABLE_PARALLEL
-#include <future>
-#endif
 
 #ifndef NDEBUG
 # define KAREN_DEBUG
@@ -101,6 +98,9 @@ using namespace std::string_literals;
 	
 using byte = uint8_t;
 using sbyte = int8_t;
+/**
+ * Converts `value` to byte.
+ */
 template<typename T>
 [[nodiscard]]
 inline constexpr byte toByte(T value) noexcept
@@ -108,6 +108,9 @@ inline constexpr byte toByte(T value) noexcept
 	return static_cast<byte>(value);
 }
 
+/**
+ * Represents piece's code
+ */
 enum class Code : byte
 {
 	PAWN = 1,
@@ -126,7 +129,9 @@ enum class Color : byte
 
 KAREN_OVERLOAD_ENUM_BIN_OPERATOR(^, Color)
 	
-[[nodiscard]]
+/**
+ * Invert `color`.
+ */
 inline constexpr Color operator! (Color color) noexcept
 {
 	return color ^ Color::WHITE;
@@ -233,7 +238,6 @@ inline constexpr bool isKing(Piece piece) noexcept
 {
 	return get<Code>(piece) == Code::KING;
 }
-
 KAREN_DEFINE_PIECE_CHECKER(White, Pawn)
 KAREN_DEFINE_PIECE_CHECKER(White, Rook)
 KAREN_DEFINE_PIECE_CHECKER(White, Knight)
@@ -302,29 +306,29 @@ inline constexpr std::string_view to_string_view(Piece piece, bool unicode = fal
 		switch(color)
 		{
 			case Color::WHITE:
-			switch (code)
-			{
-				case Code::PAWN: return "\u2659"sv;
-				case Code::ROOK: return "\u2658"sv;
-				case Code::KNIGHT: return "\u2657"sv;
-				case Code::BISHOP: return "\u2656"sv;
-				case Code::QUEEN: return "\u2655"sv;
-				case Code::KING: return "\u2654"sv;
-			}
-			break;
+				switch (code)
+				{
+					case Code::PAWN: return "\u2659"sv;
+					case Code::ROOK: return "\u2658"sv;
+					case Code::KNIGHT: return "\u2657"sv;
+					case Code::BISHOP: return "\u2656"sv;
+					case Code::QUEEN: return "\u2655"sv;
+					case Code::KING: return "\u2654"sv;
+				}
+				break;
 				
-		case Color::BLACK:
-			switch (code)
-			{
-				case Code::PAWN: return "\u265F"sv;
-				case Code::ROOK: return "\u265E"sv;
-				case Code::KNIGHT: return "\u265D"sv;
-				case Code::BISHOP: return "\u265C"sv;
-				case Code::QUEEN: return "\u265B"sv;
-				case Code::KING: return "\u265A"sv;
-			}
-			break;
-	}
+			case Color::BLACK:
+				switch (code)
+				{
+					case Code::PAWN: return "\u265F"sv;
+					case Code::ROOK: return "\u265E"sv;
+					case Code::KNIGHT: return "\u265D"sv;
+					case Code::BISHOP: return "\u265C"sv;
+					case Code::QUEEN: return "\u265B"sv;
+					case Code::KING: return "\u265A"sv;
+				}
+				break;
+		}
 	return "to_string_view(Piece): error"sv;
 }
 
@@ -1965,7 +1969,7 @@ public:
 		
 		/* Knights lose value as pawns disappear. */
 		score += (whiteCount[toByte(Code::KNIGHT)] * whiteCount[toByte(Code::PAWN)]) << 1;
-		score += (blackCount[toByte(Code::KNIGHT)] * blackCount[toByte(Code::PAWN)]) << 1;
+		score -= (blackCount[toByte(Code::KNIGHT)] * blackCount[toByte(Code::PAWN)]) << 1;
 
 		if (whiteCheck)
 			score += 20;
@@ -2285,9 +2289,6 @@ public:
 	};	
 
 	[[nodiscard]]
-#ifdef KAREN_ENABLE_PARALLEL
-	template<bool Parallel = true>
-#endif
 	Move think(int preferedDepth = 7)
 	{
 		using namespace std::chrono;
@@ -2309,54 +2310,41 @@ public:
 
 		bool moved = false;
 		const Color us = state.side;
-
-#ifdef KAREN_ENABLE_PARALLEL
-		if constexpr (!Parallel)
-					 {
-#endif
-						 Score alpha = -INF;
-						 Score beta = INF;
-						 Move bestMove = makeMove(Square::A1, Square::A1);
-
-						 std::sort(moves.begin(), moves.end(), std::greater{}); /* Because we're iterating over
-																				   all available moves we can
-																				   order all that moves at once. */
-
-						 for (auto& [s, move] : moves)
-						 {
-							 auto st = doMove(move);
-							 if (!isCheck(us))
-							 {
-								 moved = true;
-								 Score score = -alphaBeta(-beta, -alpha, preferedDepth, 1);
-								 undoMove(st);
-								 if (score > alpha)
-								 {
-									 alpha = score;
-									 bestMove = move;
-								 }
-							 }
-							 else undoMove(st);
-						 }
 		
-						 if constexpr (enable_think_info)
+		Score alpha = -INF;
+		Score beta = INF;
+		Move bestMove = makeMove(Square::A1, Square::A1);
+
+		std::sort(moves.begin(), moves.end(), std::greater{}); /* Because we're iterating over
+																  all available moves we can
+																  order all that moves at once. */
+
+		for (auto& [s, move] : moves)
+		{
+			auto st = doMove(move);
+			if (!isCheck(us))
+			{
+				moved = true;
+				Score score = -alphaBeta(-beta, -alpha, preferedDepth, 1);
+				undoMove(st);
+				if (score > alpha)
+				{
+					alpha = score;
+					bestMove = move;
+				}
+			}
+			else undoMove(st);
+		}
+		
+		if constexpr (enable_think_info)
 						 state.time = duration_cast<
 							 milliseconds>(steady_clock::now() - now);
-						 if (!moved)
-						 {
-							 if (state.isCheck) throw NoMovesAvailable(GameState::MATE);
-							 else throw NoMovesAvailable(GameState::DRAW);
-						 }
-						 return bestMove;
-#ifdef KAREN_ENABLE_PARALLEL
-					 }
-		else
+		if (!moved)
 		{
-			struct ForInstance { Move move; Score alpha; };
-			std::vector<std::future<ForInstance>> instances;
-			instances.reserve(moves.size());
+			if (state.isCheck) throw NoMovesAvailable(GameState::MATE);
+			else throw NoMovesAvailable(GameState::DRAW);
 		}
-#endif
+		return bestMove;
 	}
 }; /* class Engine */
 
