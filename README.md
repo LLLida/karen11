@@ -29,7 +29,7 @@ cmake --install .        # Requires cmake 3.15 or newer
 1. Install Karen.<br/>
 2. Launch Karen in command prompt.<br/>
 3. Play!<br/>
-<br/>
+
 ![Play with unicode output](./assets/play.png)
 
 ## License
