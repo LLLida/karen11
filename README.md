@@ -21,7 +21,7 @@ cmake --build .
 ```
 4. Install the program(_optional_):<br/>
 ```bash
-cmake --install .        # Requires cmake 3.15 or higher
+cmake --install .        # Requires cmake 3.15 or newer
 ```
 
 ## Usage

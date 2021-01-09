@@ -61,7 +61,7 @@ private:
 	void draw() override;
 
 	void fillMessageBuffer();
-	static Color promptSide() noexcept;
+	Color promptSide() noexcept;
 	static void clearTerminal() noexcept;
 	bool tryParse(std::string& s, Move& move) noexcept;
 	[[nodiscard]]

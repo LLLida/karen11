@@ -337,17 +337,58 @@ bool ConsolePlay::inputMove(Move& move)
 	
 void ConsolePlay::win()
 {
-	cout << fg::yellow << "Congratulations!\n";
+	renderBoard(playerSide);
+	std::cout << fg::green << R"(
+  _   _    ___    _   _
+ | \_/ |  / _ \  | | | |
+ \     / / / \ \ | | | |
+  \   /  | | | | | | | |
+   | |   | | | | | |_| |
+   | |   \ \_/ / |     |
+   |_|    \___/  \_____|
+ _  _  _    ___    _____
+| || || |  / _ \  |     \
+| || || | / / \ \ |  _  |
+| || || | | | | | | | | |
+| || || | | | | | | | | |
+\       / \ \_/ / | | | |
+ \_____/   \___/  |_| |_|
+)";
 }
 	
 void ConsolePlay::gameOver()
 {
-	cout << fg::magenta << "Game over :(\n";
+	renderBoard(playerSide);
+	std::cout << fg::red << R"(
+  ____    _____     _____     _____
+ /  __/  /  _  \   /     \   /  _  \
+/  /     | |_| |  /       \ /  | |  \
+| /   _  |  _  |  | || || | |  _____|
+| \  / \ | | | |  | || || | |  \____
+\  \_/ | | | | |  | || || | \       \
+ \_____/ |_| |_|  |_||_||_|  \______/
+    ___    _   _    _____    _____ 
+   / _ \  | | | |  /  _  \  /  _  \
+  / / \ \ | | | | /  | |  \ | |_| |
+  | | | | | | | | |  _____| |  _  /
+  | | | | | \_/ | |  \____  | | \ \
+  \ \_/ / \     / \       \ | | | |
+   \___/   \___/   \______/ |_| |_|
+)";
 }
 
 void ConsolePlay::draw()
 {
-	cout << reset << "Draw";
+	renderBoard(playerSide);
+	std::cout << fg::yellow << R"(
+ ____     _____   _____   _  _  _ 
+|    \   /  _  \ /  _  \ | || || |
+|  _  \  | |_| | | |_| | | || || |
+| | \  | |  _  / |  _  | | || || |
+| |_/  | | | \ \ | | | | | || || |
+|      | | | | | | | | | \       /
+|_____/  |_| |_| |_| |_|  \_____/ 
+)";
 }
 
 void ConsolePlay::fillMessageBuffer()
@@ -387,6 +428,41 @@ void ConsolePlay::fillMessageBuffer()
 	
 Color ConsolePlay::promptSide() noexcept
 {
+	static const std::string_view images[] = {
+		R"(
+    __        __
+  /~ .~\    /~  ~\
+ '      `\/'      *
+(                .*)
+|                .*|
+ \            . *./
+  `\ .      . .*/'
+    `\ * .*. */'
+      `\ * */'
+        `\/'
+)",
+		R"(
+  _   _
+ |*\_/*|_______
+ |_/-\_|______ \
+| |           | |
+| |  /\     | | |
+| |-/  | /-/\-| |
+| |    \/     | |
+| |___________| |
+ \_____________/
+      |    |
+      |   .|
+      |  .*|
+      | .**|
+   ___|____|___
+  / ********** \
+/  ************  \
+-------------------
+)"
+	};
+	std::cout << fg::magenta << images[random() % std::size(images)];
+	
 	while(true)
 	{
 		std::cout << fg::yellow
