@@ -338,7 +338,7 @@ bool ConsolePlay::inputMove(Move& move)
 void ConsolePlay::win()
 {
 	renderBoard(playerSide);
-	std::cout << fg::green << R"(
+	cout << fg::green << R"(
   _   _    ___    _   _
  | \_/ |  / _ \  | | | |
  \     / / / \ \ | | | |
@@ -359,7 +359,7 @@ void ConsolePlay::win()
 void ConsolePlay::gameOver()
 {
 	renderBoard(playerSide);
-	std::cout << fg::red << R"(
+	cout << fg::red << R"(
   ____    _____     _____     _____
  /  __/  /  _  \   /     \   /  _  \
 /  /     | |_| |  /       \ /  | |  \
@@ -380,7 +380,7 @@ void ConsolePlay::gameOver()
 void ConsolePlay::draw()
 {
 	renderBoard(playerSide);
-	std::cout << fg::yellow << R"(
+	cout << fg::yellow << R"(
  ____     _____   _____   _  _  _ 
 |    \   /  _  \ /  _  \ | || || |
 |  _  \  | |_| | | |_| | | || || |
@@ -461,6 +461,8 @@ Color ConsolePlay::promptSide() noexcept
 -------------------
 )"
 	};
+	
+	random.seed(std::chrono::steady_clock::now().time_since_epoch().count());
 	std::cout << fg::magenta << images[random() % std::size(images)];
 	
 	while(true)
