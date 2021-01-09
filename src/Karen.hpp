@@ -337,9 +337,9 @@ inline constexpr std::string_view to_string_view(Piece piece, bool unicode = fal
 				switch (code)
 				{
 					case Code::PAWN: return "\u2659"sv;
-					case Code::ROOK: return "\u2658"sv;
-					case Code::KNIGHT: return "\u2657"sv;
-					case Code::BISHOP: return "\u2656"sv;
+					case Code::KNIGHT: return "\u2658"sv;
+					case Code::BISHOP: return "\u2657"sv;
+					case Code::ROOK: return "\u2656"sv;
 					case Code::QUEEN: return "\u2655"sv;
 					case Code::KING: return "\u2654"sv;
 				}
@@ -349,9 +349,9 @@ inline constexpr std::string_view to_string_view(Piece piece, bool unicode = fal
 				switch (code)
 				{
 					case Code::PAWN: return "\u265F"sv;
-					case Code::ROOK: return "\u265E"sv;
-					case Code::KNIGHT: return "\u265D"sv;
-					case Code::BISHOP: return "\u265C"sv;
+					case Code::KNIGHT: return "\u265E"sv;
+					case Code::BISHOP: return "\u265D"sv;
+					case Code::ROOK: return "\u265C"sv;
 					case Code::QUEEN: return "\u265B"sv;
 					case Code::KING: return "\u265A"sv;
 				}
