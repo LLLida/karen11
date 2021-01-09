@@ -176,12 +176,7 @@ enum class Piece : byte
 };
 
 template<typename T>
-inline constexpr T get(Piece) noexcept
-{
-	static_assert(sizeof(T) == 2 * sizeof(T) + 1,
-				  "get(Piece) is not defined for this type.");
-	return T{};
-}
+inline constexpr T get(Piece) noexcept;
 
 /**
  * Get piece's code.
@@ -295,6 +290,9 @@ inline void makeMoved(Piece& rPiece) noexcept
 	rPiece = static_cast<Piece>(toByte(rPiece) | 0b0100'0000);
 }
 
+/**
+ * Convert piece to string view.
+ */
 [[nodiscard]]
 inline constexpr std::string_view to_string_view(Piece piece, bool unicode = false) noexcept
 {
@@ -332,7 +330,7 @@ inline constexpr std::string_view to_string_view(Piece piece, bool unicode = fal
 				}
 				break;
 		}
-	else
+	else /* https://en.wikipedia.org/wiki/Chess_symbols_in_Unicode */
 		switch(color)
 		{
 			case Color::WHITE:
@@ -362,6 +360,9 @@ inline constexpr std::string_view to_string_view(Piece piece, bool unicode = fal
 	return "to_string_view(Piece): error"sv;
 }
 
+/**
+ * Convert piece to string.
+ */
 [[nodiscard]]
 inline std::string to_string(Piece piece, bool unicode = false) noexcept
 {
@@ -390,6 +391,9 @@ KAREN_OVERLOAD_ENUM_BIN_OPERATOR(-, Square)
 KAREN_OVERLOAD_ENUM_CR_OPERATOR(+, Square)
 KAREN_OVERLOAD_ENUM_CR_OPERATOR(-, Square)
 
+/**
+ * Convert square to string view.
+ */
 [[nodiscard]]
 inline std::string_view to_string_view(Square square) noexcept
 {
@@ -463,7 +467,9 @@ inline std::string_view to_string_view(Square square) noexcept
 	}
 	return "to_string_view(Square): error"sv;
 }
-
+/**
+ * Convert square to string.
+ */
 [[nodiscard]]
 inline std::string to_string(Square square) noexcept
 {
@@ -487,7 +493,9 @@ inline constexpr byte getY(Square square) noexcept
 {
 	return (toByte(square) >> 3) & 7;
 }
-
+/**
+ * Check if square is inside 8x8 board.
+ */
 [[nodiscard]]
 inline constexpr bool isValid(Square square) noexcept
 {
@@ -564,10 +572,25 @@ inline constexpr Score ZERO = 0;
 inline constexpr Score INF = 32000;
 inline constexpr Score DRAW = ZERO;
 inline constexpr Score MATE = -INF;
+/**
+ * Pawn's value used in evaluation function.
+ */
 inline constexpr Score PAWN_SCORE = 100;
+/**
+ * Knight's value used in evaluation function.
+ */
 inline constexpr Score KNIGHT_SCORE = 375;
+/**
+ * Bishop's value used in evaluation function.
+ */
 inline constexpr Score BISHOP_SCORE = 400;
+/**
+ * Rook's value used in evaluation function.
+ */
 inline constexpr Score ROOK_SCORE = 550;
+/**
+ * Queen's value used in evaluation function.
+ */
 inline constexpr Score QUEEN_SCORE = 1080;
 
 class Board
@@ -743,7 +766,17 @@ public:
 	const_iterator end() const noexcept { return data + sz; }
 	size_type size() const noexcept { return sz; }
 
+	/**
+	 * Get element of vector at `index`.
+	 * Warning: this function doesn't do checking for performance: if
+	 * `index >= size` then stack corruption will occur.
+	 */
 	T& operator[](size_type index) noexcept { return data[index]; }
+	/**
+	 * Get const element of vector at `index`.
+	 * Warning: this function doesn't do checking for performance: if
+	 * `index >= size` then stack corruption will occur.
+	 */
 	const T& operator[](size_type index) const noexcept { return data[index]; }
 
 	void push_back(T&& rvalue)
@@ -761,11 +794,14 @@ public:
 	void pop_back()
 	{
 		KAREN_ASSERT(sz > 0, "vector on stack : size is 0");
-		if constexpr (~std::is_trivially_destructible_v<T>)
-						 data[sz].~T();
+		data[sz].~T();
 		sz--;
 	}
 
+	/**
+	 * Erase element from vector at `pos`.
+	 * Complexity: O(N)
+	 */
 	iterator erase(iterator pos)
 	{
 		KAREN_ASSERT(pos >= begin() && pos < end(),
@@ -783,7 +819,10 @@ public:
 		end()->~T(); /* Calling last element's destructor */
 		return pos;
 	}
-
+    /**
+	 * Erase element from vector at `index`.
+	 * Complexity: O(N)
+	 */
 	iterator erase(size_type index)
 	{
 		return erase(begin() + index);
@@ -859,7 +898,6 @@ public:
 		: board(board)
 	{
 		state.side = side;
-		// state.game = State::PLAY;
 		state.isCheck = false;
 
 		fillLists();
@@ -870,18 +908,21 @@ public:
 	 * ineffective: it copies whole `board` and reevaluates
 	 * figure lists.
 	 * This function is usable when user wants to make
-	 * move forbidden in chess.
+	 * forbidden move.
 	 */
 	void setBoard(const Board& board) noexcept
 	{
 		this->board = board;
 
-		// state.game = State::PLAY;
 		state.isCheck = false;
 		
 		fillLists();
 	}
-	
+
+	/**
+	 * Do a move.
+	 * For valid usage check if `availableMoves()` contains `move`.
+	 */
 	auto doMove(Move move)
 	{
 		MoveInfo info;
@@ -1058,7 +1099,11 @@ public:
 		
 		return info;
 	}
-	
+
+	/**
+	 * Undo a move.
+	 * `info` must be value returned from `doMove()`.
+	 */
 	void undoMove(const MoveInfo& info) noexcept
 	{
 		if (info.erased)
@@ -1254,8 +1299,7 @@ private:
 	}
 
 	/**
-	 * Returns back to list figure that was erased from it via `erase`.
-	 * If `node` isn't result of `erase` then assertion will be failed.
+	 * Returns back to list figure that was erased by `erase()`.
 	 */
 	void insert(Figure* node, Color hint)
 	{
@@ -1485,7 +1529,7 @@ private:
 	{
 		byte enemyKingX = getX(getList(!state.side)->pos);
 		byte enemyKingY = getY(getList(!state.side)->pos);
-		
+
 		auto add = [&](Square from, Square to, int16_t extra = 0) noexcept {
 			/* See MVV/LVA priciple: https://www.chessprogramming.org/MVV-LVA */
 			int16_t score = int16_t(get<Code>(board[to])) - int16_t(get<Code>(board[to])) + 6 + extra;
@@ -2378,6 +2422,11 @@ public:
 	}
 }; /* class Engine */
 
+/**
+ * Abstract chess game class.
+ * Inherit your own class from it and override some functions
+ * to create your own game class.
+ */
 class Play
 {
 private:
@@ -2396,13 +2445,31 @@ protected:
 		: Play(Board::standard(), playerSide) {}
 
 	auto& history() const { return movesHistory; }
-	
+
+	/**
+	 * Render a board.
+	 * This function called everytime board updated.
+	 * If true will returned game will stopped.
+	 */
 	[[nodiscard]]
 	virtual bool renderBoard(Color side) = 0;
+	/**
+	 * Input move from user.
+	 * If true will returned game will stopped.
+	 */
 	[[nodiscard]]
 	virtual bool inputMove(Move& move) = 0;
+	/**
+	 * Called when user won.
+	 */
 	virtual void win() = 0;
+	/**
+	 * Called when karen won.
+	 */
 	virtual void gameOver() = 0;
+	/**
+	 * Called when draw.
+	 */
 	virtual void draw() = 0;
 	
 public:
@@ -2414,6 +2481,9 @@ public:
 		NONE = 100,
 	};
 
+	/**
+	 * Play a chess game.
+	 */
 	Result operator() (byte depth = 7)
 	{
 		Color side = Color::WHITE;
@@ -2452,7 +2522,6 @@ public:
 		}
 		return Result::DRAW;
 	}
-
 };
 
 } /* namespace karen11 */
