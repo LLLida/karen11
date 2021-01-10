@@ -109,7 +109,7 @@ inline constexpr byte toByte(T value) noexcept
 }
 
 /**
- * Represents piece's code
+ * @brief Represents piece's code
  */
 enum class Code : byte
 {
@@ -121,7 +121,9 @@ enum class Code : byte
 	KING = 6,
 };
 
-/* Represents piece's color */
+/**
+ * @brief Represents piece's color
+ */
 enum class Color : byte
 {
 	WHITE = 0b1000'0000,
@@ -131,7 +133,7 @@ enum class Color : byte
 KAREN_OVERLOAD_ENUM_BIN_OPERATOR(^, Color)
 	
 /**
- * Invert `color`.
+ * @brief Invert `color`.
  */
 inline constexpr Color operator! (Color color) noexcept
 {
@@ -139,6 +141,8 @@ inline constexpr Color operator! (Color color) noexcept
 }
 
 /**
+ * @brief Represents piece at board
+ * @detail
  * Bits:
  *  0..2: code
  *  6: moved
@@ -179,7 +183,7 @@ template<typename T>
 inline constexpr T get(Piece) noexcept;
 
 /**
- * Get piece's code.
+ * @brief Get piece's code.
  */
 template<>
 inline constexpr Code get<Code>(Piece piece) noexcept
@@ -187,7 +191,7 @@ inline constexpr Code get<Code>(Piece piece) noexcept
 	return static_cast<Code>(toByte(piece) & 7);
 }
 /**
- * Get piece's color.
+ * @brief Get piece's color.
  */
 template<>
 inline constexpr Color get<Color>(Piece piece) noexcept
@@ -196,7 +200,7 @@ inline constexpr Color get<Color>(Piece piece) noexcept
 }
 
 /**
- * Check whether piece is white.
+ * @brief Check whether piece is white.
  */
 inline constexpr bool isWhite(Piece piece)
 {
@@ -205,7 +209,7 @@ inline constexpr bool isWhite(Piece piece)
 	return get<Color>(piece) == Color::WHITE;
 }
 /**
- * Check whether piece is white.
+ * @brief Check whether piece is white.
  */
 inline constexpr bool isBlack(Piece piece) noexcept
 {
@@ -214,7 +218,7 @@ inline constexpr bool isBlack(Piece piece) noexcept
 	return get<Color>(piece) == Color::BLACK;
 }
 /**
- * Check whether piece is pawn.
+ * @brief Check whether piece is pawn.
  */
 [[nodiscard]]
 inline constexpr bool isPawn(Piece piece) noexcept
@@ -222,7 +226,7 @@ inline constexpr bool isPawn(Piece piece) noexcept
 	return get<Code>(piece) == Code::PAWN;
 }
 /**
- * Check whether piece is rook.
+ * @brief Check whether piece is rook.
  */
 [[nodiscard]]
 inline constexpr bool isRook(Piece piece) noexcept
@@ -230,7 +234,7 @@ inline constexpr bool isRook(Piece piece) noexcept
 	return get<Code>(piece) == Code::ROOK;
 }
 /**
- * Check whether piece is knight.
+ * @brief Check whether piece is knight.
  */
 [[nodiscard]]
 inline constexpr bool isKnight(Piece piece) noexcept
@@ -238,7 +242,7 @@ inline constexpr bool isKnight(Piece piece) noexcept
 	return get<Code>(piece) == Code::KNIGHT;
 }
 /**
- * Check whether piece is bishop.
+ * @brief Check whether piece is bishop.
  */
 [[nodiscard]]
 inline constexpr bool isBishop(Piece piece) noexcept
@@ -246,7 +250,7 @@ inline constexpr bool isBishop(Piece piece) noexcept
 	return get<Code>(piece) == Code::BISHOP;
 }
 /**
- * Check whether piece is queen.
+ * @brief Check whether piece is queen.
  */
 [[nodiscard]]
 inline constexpr bool isQueen(Piece piece) noexcept
@@ -254,7 +258,7 @@ inline constexpr bool isQueen(Piece piece) noexcept
 	return get<Code>(piece) == Code::QUEEN;
 }
 /**
- * Check whether piece is king.
+ * @brief Check whether piece is king.
  */
 [[nodiscard]]
 inline constexpr bool isKing(Piece piece) noexcept
@@ -274,7 +278,7 @@ KAREN_DEFINE_PIECE_CHECKER(Black, Bishop)
 KAREN_DEFINE_PIECE_CHECKER(Black, Queen)
 KAREN_DEFINE_PIECE_CHECKER(Black, King)
 /**
- * Check whether piece is moved.
+ * @brief Check whether piece is moved.
  */
 [[nodiscard]]
 inline constexpr bool isMoved(Piece piece)
@@ -291,7 +295,7 @@ inline void makeMoved(Piece& rPiece) noexcept
 }
 
 /**
- * Convert piece to string view.
+ * @brief Convert piece to string view.
  */
 [[nodiscard]]
 inline constexpr std::string_view to_string_view(Piece piece, bool unicode = false) noexcept
@@ -361,7 +365,7 @@ inline constexpr std::string_view to_string_view(Piece piece, bool unicode = fal
 }
 
 /**
- * Convert piece to string.
+ * @brief Convert piece to string.
  */
 [[nodiscard]]
 inline std::string to_string(Piece piece, bool unicode = false) noexcept
@@ -370,6 +374,8 @@ inline std::string to_string(Piece piece, bool unicode = false) noexcept
 }
 
 /**
+ * @brief Represents position at board
+ * @detail
  * Bits:
  *  0-2: x coord
  *  3-5: y coord
@@ -392,7 +398,7 @@ KAREN_OVERLOAD_ENUM_CR_OPERATOR(+, Square)
 KAREN_OVERLOAD_ENUM_CR_OPERATOR(-, Square)
 
 /**
- * Convert square to string view.
+ * @brief Convert square to string view.
  */
 [[nodiscard]]
 inline std::string_view to_string_view(Square square) noexcept
@@ -468,7 +474,7 @@ inline std::string_view to_string_view(Square square) noexcept
 	return "to_string_view(Square): error"sv;
 }
 /**
- * Convert square to string.
+ * @brief Convert square to string.
  */
 [[nodiscard]]
 inline std::string to_string(Square square) noexcept
@@ -482,19 +488,25 @@ inline constexpr Square makeSquare(byte x, byte y) noexcept
 	return static_cast<Square>(x + (y << 3));
 }
 
+/**
+ * @return x-component of `square`
+ */
 [[nodiscard]]
 inline constexpr byte getX(Square square) noexcept
 {
 	return toByte(square) & 7;
 }
 
+/**
+ * @return y-component of `square`
+ */
 [[nodiscard]]
 inline constexpr byte getY(Square square) noexcept
 {
 	return (toByte(square) >> 3) & 7;
 }
 /**
- * Check if square is inside 8x8 board.
+ * @brief Check if square is inside 8x8 board.
  */
 [[nodiscard]]
 inline constexpr bool isValid(Square square) noexcept
@@ -503,10 +515,12 @@ inline constexpr bool isValid(Square square) noexcept
 }
 
 /**
+ * @brief Represents move
+ * @detail
  * Bits:
  *  0-5: origin
  *  6-11: destination
- *  12-13: promotion piece type
+ *  12-13: promotion piece type(at the moment pawns can only became queens)
  *  14-15: special move
  */
 enum class Move : uint16_t {};
@@ -522,6 +536,9 @@ enum class MoveType : uint16_t
 template<typename T>
 T get(Move) noexcept;
 
+/**
+ * @return type of `move`
+ */
 template<>
 [[nodiscard]]
 inline MoveType get<MoveType>(Move move) noexcept
@@ -530,18 +547,30 @@ inline MoveType get<MoveType>(Move move) noexcept
 		static_cast<uint16_t>(move) & 0b1100'0000'0000'0000);
 }
 
+/**
+ * @return origin of `move`
+ */
 [[nodiscard]]
 inline constexpr Square getOrig(Move move) noexcept
 {
 	return static_cast<Square>(static_cast<uint16_t>(move) & 63);
 }
 
+/**
+ * @return destination of `move`
+ */
 [[nodiscard]]
 inline constexpr Square getDest(Move move) noexcept
 {
 	return static_cast<Square>((static_cast<uint16_t>(move) >> 6) & 63);
 }
 
+/**
+ * @brief Create move
+ * @param orig move's origin, relevant only when `type` is NORMAL or ENPASSANT
+ * @param dest move's destination, relevant only when `type` is NORMAL or ENPASSANT
+ * @param type move's type
+ */
 [[nodiscard]]
 inline constexpr Move makeMove(Square orig, Square dest, MoveType type = MoveType::NORMAL) noexcept
 {
@@ -551,18 +580,22 @@ inline constexpr Move makeMove(Square orig, Square dest, MoveType type = MoveTyp
 		static_cast<uint16_t>(type));
 }
 
+/**
+ * Convert move to string.
+ */
 [[nodiscard]]
 inline std::string to_string(Move move) noexcept
 {
+	using namespace std::string_literals;
 	switch (get<MoveType>(move))
 	{
 		case MoveType::NORMAL:
 		case MoveType::ENPASSANT:
 			return to_string(getOrig(move)) + to_string(getDest(move));
 		case MoveType::SHORT_CASTLING:
-			return "OO";
+			return "OO"s;
 		case MoveType::LONG_CASTLING:
-			return "OOO";
+			return "OOO"s;
 	}
 	return "to_string(move): error";
 }
@@ -573,26 +606,30 @@ inline constexpr Score INF = 32000;
 inline constexpr Score DRAW = ZERO;
 inline constexpr Score MATE = -INF;
 /**
- * Pawn's value used in evaluation function.
+ * @brief Pawn's value used in evaluation function.
  */
 inline constexpr Score PAWN_SCORE = 100;
 /**
- * Knight's value used in evaluation function.
+ * @brief Knight's value used in evaluation function.
  */
 inline constexpr Score KNIGHT_SCORE = 375;
 /**
- * Bishop's value used in evaluation function.
+ * @brief Bishop's value used in evaluation function.
  */
 inline constexpr Score BISHOP_SCORE = 400;
 /**
- * Rook's value used in evaluation function.
+ * @brief Rook's value used in evaluation function.
  */
 inline constexpr Score ROOK_SCORE = 550;
 /**
- * Queen's value used in evaluation function.
+ * @brief Queen's value used in evaluation function.
  */
 inline constexpr Score QUEEN_SCORE = 1080;
 
+/**
+ * @brief Represents chess board
+ * Technically it's just an array of pieces.
+ */
 class Board
 {
 public:
@@ -723,8 +760,8 @@ struct MoveEx
 };
 
 /**
- * Almost same to std::vector but uses stack memory.
- * Therefore it has constexpr capacity - `C`.
+ * Almost same to `std::vector` but uses stack memory.
+ * Therefore it has constexpr capacity = `C`.
  */
 template<typename T, unsigned C = 256>
 class VectorOnStack
@@ -799,8 +836,9 @@ public:
 	}
 
 	/**
-	 * Erase element from vector at `pos`.
+	 * @brief Erase element from vector at `pos`.
 	 * Complexity: O(N)
+	 * @return iterator that points to new element at `pos`.
 	 */
 	iterator erase(iterator pos)
 	{
@@ -892,7 +930,7 @@ private:
 	
 public:
 	/**
-	 * Create karen chess engine.
+	 * @brief Create karen chess engine.
 	 */
 	Engine(const Board& board, Color side)
 		: board(board)
@@ -904,7 +942,8 @@ public:
 	}
 
 	/**
-	 * It isn't good to call this function everytime you move because it
+	 * @brief Set engine's board
+	 * @detail It isn't good to call this function everytime you move because it
 	 * ineffective: it copies whole `board` and reevaluates
 	 * figure lists.
 	 * This function is usable when user wants to make
@@ -920,8 +959,8 @@ public:
 	}
 
 	/**
-	 * Do a move.
-	 * For valid usage check if `availableMoves()` contains `move`.
+	 * @brief Do a move.
+	 * @warning For valid usage check if `availableMoves()` contains `move`.
 	 */
 	auto doMove(Move move)
 	{
@@ -1101,8 +1140,8 @@ public:
 	}
 
 	/**
-	 * Undo a move.
-	 * `info` must be value returned from `doMove()`.
+	 * @brief Undo a move.
+	 * @warning `info` must be value returned from `doMove()`.
 	 */
 	void undoMove(const MoveInfo& info) noexcept
 	{
@@ -1180,27 +1219,27 @@ public:
 	}
 
 	/**
-	 * Get board that engine is playing on.
+	 * @brief Get board that engine is playing on.
 	 */
 	[[nodiscard]]
 	auto& getBoard() const noexcept { return board; }
 	/**
-	 * Get engine's state.
+	 * @brief Get engine's state.
 	 */
 	[[nodiscard]]
 	auto& getState() const noexcept { return state; }
 	/**
-	 * Get list with all white figures.
+	 * @brief Get list with all white figures.
 	 */
 	[[nodiscard]]
 	auto& getWhiteList() const noexcept { return whiteList; }
 	/**
-	 * Get list with all black figures.
+	 * @brief Get list with all black figures.
 	 */
 	[[nodiscard]]
 	auto& getBlackList() const noexcept { return blackList; }
 	/**
-	 * Get list depending on `color`.
+	 * @brief Get list depending on `color`.
 	 */
 	[[nodiscard]]
 	auto& getList(Color side) const noexcept { return (side == Color::WHITE) ? whiteList : blackList; }
@@ -1245,13 +1284,13 @@ private:
 	};
 	
 	/**
-	 * Get non constant list depending on `color`.
+	 * @brief Get non constant list depending on `color`.
 	 */
 	[[nodiscard]]
 	auto& getList(Color side) noexcept { return (side == Color::WHITE) ? whiteList : blackList; }
 
 	/**
-	 * Find node in figure list that has pos == `pos`.
+	 * @return node in figure list that has position == `pos`. 
 	 */
 	Figure* find(Square pos, Color hint) noexcept
 	{
@@ -1262,7 +1301,8 @@ private:
 	}
 	
 	/**
-	 * Erases figure with pos = `pos` from list `hint`.
+	 * @brief Erases figure with pos = `pos` from list `hint`.
+	 * @return erased node
 	 */
 	Figure* erase(Square pos, Color hint)
 	{
@@ -1299,7 +1339,7 @@ private:
 	}
 
 	/**
-	 * Returns back to list figure that was erased by `erase()`.
+	 * @brief Returns back to list figure that was erased by `erase()`.
 	 */
 	void insert(Figure* node, Color hint)
 	{
@@ -1314,8 +1354,8 @@ private:
 	}
 	
     /**
-	 * Fills white and black lists with pieces from board.
-	 * This function is ineffective; it must be called only
+	 * @brief Fills white and black lists with pieces from board.
+	 * @detail This function is not effective; it must be called only
 	 * when engine is initializing or when user wants to
 	 * change board.
 	 */
@@ -1388,7 +1428,8 @@ private:
 	}
 
 	/**
-	 * Check if square `pos` can be atacked by side - `!side`.
+	 * @brief Check if square `pos` can be atacked by side - `!side`.
+	 * This function is mainly used for finding checks.
 	 */
 	[[nodiscard]]
 	bool isAtacked(Square pos, Color side) const
@@ -1521,8 +1562,8 @@ private:
 	}
 	
 	/**
-	 * Writes all available captures of current side to `moves`.
-	 * `moves` must be preallocated array with at least 256 elements.
+	 * @brief Writes all available captures of current side to `moves`.
+	 * @warning `moves` must be preallocated array with at least 256 elements.
 	 */
 	template<unsigned C>
 	void genCaptures(VectorOnStack<MoveEx, C>& moves) const
@@ -1653,7 +1694,11 @@ private:
 			}
 		}
 	}
-	
+
+	/**
+	 * @brief Writes all available 'quiet' moves of current side to `moves`.
+	 * @warning `moves` must be preallocated array with at least 256 elements.
+	 */	
 	template<unsigned C>
 	void genMoves(VectorOnStack<MoveEx, C>& moves) const
 	{
@@ -1809,7 +1854,7 @@ private:
 	
 public:
 	/**
-	 * Returns true if `side` in check.
+	 * @return true if `side` in check.
 	 */
 	[[nodiscard]]
 	bool isCheck(Color side) const
@@ -1819,7 +1864,7 @@ public:
 	}
 
 	/**
-	 * Returns true if current state in checkmate.
+	 * @return true if current state in checkmate.
 	 */
 	[[nodiscard]]
 	bool isCheckMate() const
@@ -1832,7 +1877,7 @@ public:
 	}
 
 	/**
-	 * Returns true if current side in stalemate.
+	 * @return true if current side in stalemate.
 	 */
 	[[nodiscard]]
 	bool isStaleMate() const
@@ -1841,10 +1886,9 @@ public:
 	}
 
 	/**
-	 * Get moves that available for `side`.
-	 * If `considerChecks` is true then
-	 * this function will return only moves that
-	 * don't cause check.
+	 * @brief Get moves that available for `side`.
+	 * @param considerChecks only moves that
+	 * don't cause check will be returned.
 	 */
 	[[nodiscard]]
 	VectorOnStack<Move, max_available_moves> availableMoves(bool considerChecks = true) const
@@ -1879,7 +1923,7 @@ public:
 
 private:
 	/**
-	 * Swaps first and best move in range [index, moves.size()).
+	 * @brief Swaps first and best move in range [index, moves.size()).
 	 */
 	static void pick(VectorOnStack<MoveEx, max_available_moves>& moves, unsigned index) noexcept
 	{
@@ -1891,6 +1935,9 @@ private:
 		std::swap(moves[index], moves[max]);
 	}
 
+	/**
+	 * @brief Alpha-beta algorithm. See https://www.chessprogramming.org/Alpha-Beta
+	 */
 	[[nodiscard]]
 	Score alphaBeta(Score alpha, Score beta, int depth, unsigned ply)
 	{
@@ -1961,14 +2008,15 @@ private:
 	}
 
 public:
+	/**
+	 * @brief Statically evaluates position.
+	 * Most things that implemented in this function
+	 * was brought from CPW - https://www.chessprogramming.org/Evaluation#Linear_vs._Nonlinear
+	 * Thank you, Chess Programming Wiki!
+	 */
 	[[nodiscard]]
 	Score evaluate() const
-	{
-		/* Most things that implemented there
-		 * was brought from CPW - https://www.chessprogramming.org/Evaluation#Linear_vs._Nonlinear
-		 * Thank you, Chess Programming Wiki!
-		 */
-		
+	{	
 		Score score = ZERO;
 
 		byte whiteCount[toByte(Code::KING) + 1] = {0};
@@ -2055,6 +2103,9 @@ public:
 	}
 
 private:
+	/**
+	 * Evaluates pawn.
+	 */
 	[[nodiscard]]
 	Score evalPawn(Square square) const
 	{
@@ -2065,11 +2116,11 @@ private:
 		{
 			constexpr sbyte evalTable[64] = {
 				0,   0,  0,  0,  0,  0,  0,  0,
-				4,   4,  4,  0,  0,  4,  4,  4,
-				6,   8,  2, 10, 10,  2,  8,  6,
-				6,   8, 12, 18, 18, 12,  8,  6,
-				8,  12, 16, 24, 24, 16, 12,  8,
-				12, 16, 24, 32, 32, 24, 16, 12,
+				0,   4,  4,  0,  0,  4,  4,  0,
+				2,   8,  2, 10, 10,  2,  8,  2,
+				4,   8, 12, 18, 18, 12,  8,  4,
+				6,  12, 16, 24, 24, 16, 12,  6,
+				8,  16, 24, 32, 32, 24, 16,  8,
 				20, 36, 36, 36, 36, 36, 36, 20,
 				0,   0,  0,  0,  0,  0,  0,  0,
 			};
@@ -2088,11 +2139,11 @@ private:
 			constexpr sbyte evalTable[64] = {
 				0,  0,  0,  0,  0,  0,  0,  0,
 				20, 36, 36, 36, 36, 36, 36, 20,
-				12, 16, 24, 32, 32, 24, 16, 12,
-				8, 12, 16, 24, 24, 16, 12,  8,
-				6,  8, 12, 18, 18, 12,  8,  6,
-				6,  8,  2, 10, 10,  2,  8,  6,
-				4,  4,  4,  0,  0,  4,  4,  4,
+				8, 16, 24, 32, 32, 24, 16,  8,
+				6, 12, 16, 24, 24, 16, 12,  6,
+				4,  8, 12, 18, 18, 12,  8,  4,
+				2,  8,  2, 10, 10,  2,  8,  2,
+				0,  4,  4,  0,  0,  4,  4,  0,
 				0,  0,  0,  0,  0,  0,  0,  0,
 			};
 			if (isBlackPawn(board[makeSquare(x, y + 1)]))
@@ -2114,12 +2165,12 @@ private:
 	{
 		constexpr sbyte evalTable[64] = {
 			0,  4,  8, 10, 10,  8,  4,  0,
-			4,  8, 16, 20, 20, 16,  8,  4,
+			4,  8, 20, 20, 20, 20,  8,  4,
 			8, 16, 24, 28, 28, 24, 16,  8,
 			10, 20, 28, 32, 32, 28, 20, 10,
 			10, 20, 28, 32, 32, 28, 20, 10,
 			8, 16, 24, 28, 28, 24, 16,  8,
-			4,  8, 16, 20, 20, 16,  8,  4,
+			4,  8, 20, 20, 20, 20,  8,  4,
 			0,  4,  8, 10, 10,  8,  4,  0,
 		};
 		Score score = KNIGHT_SCORE;
@@ -2195,14 +2246,14 @@ private:
 				}
 			}
 			constexpr sbyte evalTable[64] = {
-				0,  0,  0,  5,  5,  0,  0,  0,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				5, 10, 10, 10, 10, 10, 10,  5,
-				0,  0,  0,  0,  0,  0,  0,  0,
+				0,  0, 0, 5, 5, 0, 0,  0,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				5,  7, 7, 7, 7, 7, 7,  5,
+				0,  0, 0, 0, 0, 0, 0,  0,
 			};
 			score += evalTable[toByte(square)];
 		}
@@ -2221,14 +2272,14 @@ private:
 				}
 			}
 			constexpr sbyte evalTable[64] = {
-				0,  0,  0,  0,  0,  0,  0,  0,
-				5, 10, 10, 10, 10, 10, 10,  5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				0,  0,  0,  5,  5,  0,  0,  0
+				0,  0, 0, 0, 0, 0, 0,  0,
+				5,  7, 7, 7, 7, 7, 7,  5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				-5, 0, 0, 0, 0, 0, 0, -5,
+				0,  0, 0, 5, 5, 0, 0,  0
 			};
 			score += evalTable[toByte(square)];
 		}

@@ -651,3 +651,5 @@ commands(type them when Karen asks you to input move):
 
 }
 
+/* ConsolePlay.cpp ends here */
+

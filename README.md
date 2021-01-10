@@ -1,6 +1,6 @@
 # karen11
-Karen11 is lightweight chess engine written in C++17 for school project. She doesn't play very good but can beat a regular human.
-<br/>
+`Karen11` is lightweight chess engine written in C++17 for school project. She doesn't play very good but can beat a regular human.<br/>
+At the moment `Karen` is only tested on MS Windows and GNU Linux. I'd very thankful if you will try to launch `Karen` on other platform and tell me how it was.<br/>
 ![Karen in terminal](./assets/karen.png)
 
 ## Installation 

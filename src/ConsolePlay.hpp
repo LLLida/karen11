@@ -72,3 +72,5 @@ private:
 
 } /* namespace karen11 */
 
+/* ConsolePlay.hpp ends here */
+
