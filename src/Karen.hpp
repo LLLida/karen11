@@ -2136,9 +2136,9 @@ public:
 		score -= (blackCount[toByte(Code::KNIGHT)] * blackCount[toByte(Code::PAWN)]) << 1;
 
 		if (whiteCheck)
-			score += 20;
+			score -= 15;
 		if (blackCheck)
-			score -= 20;
+			score += 15;
 
 		if (state.side == Color::BLACK) score = -score;
 		return score;
@@ -2217,6 +2217,29 @@ private:
 		};
 		Score score = KNIGHT_SCORE;
 		score += evalTable[toByte(square)];
+		const auto x = getX(square);
+		const auto y = getY(square);
+		/* Marginal bonus for a knight defended by a pawn */
+		if (get<Color>(board[square]) == Color::WHITE)
+		{
+			if (y != 0)
+			{
+				if (x != 0 && isWhitePawn(board[makeSquare(x - 1, y - 1)]))
+					score += 4;
+				if (x < 7 && isWhitePawn(board[makeSquare(x + 1, y - 1)]))
+					score += 4;
+			}
+		}
+		else
+		{
+			if (y < 7)
+			{
+				if (x != 0 && isBlackPawn(board[makeSquare(x - 1, y + 1)]))
+					score += 4;
+				if (x < 7 && isBlackPawn(board[makeSquare(x + 1, y + 1)]))
+					score += 4;
+			}
+		}
 		return score;
 	}
 
@@ -2250,10 +2273,10 @@ private:
 					if (piece != Piece::EMPTY)
 					{
 						if (get<Color>(piece) != get<Color>(board[square]))
-							score += 3;
+							score += 2;
 						break;
 					}
-					score += 2;
+					score += 1;
 				}
 				else break;
 			}
@@ -2339,10 +2362,13 @@ private:
 					if (piece != Piece::EMPTY)
 					{
 						if (get<Color>(piece) != get<Color>(board[square]))
-							score += 3;
+							score += 2;
+						/* Rooks defending each other */
+						else if (isRook(piece))
+							score += 4;
 						break;
 					}
-					score += 2;
+					score += 1;
 				}
 				else break;
 			}
@@ -2354,6 +2380,8 @@ private:
 	Score evalQueen(Square square) const
 	{
 		Score score = QUEEN_SCORE;
+		const auto x = getX(square);
+		const auto y = getY(square);
 		if (get<Color>(board[square]) == Color::WHITE)
 		{
 			constexpr sbyte evalTable[64] = {
@@ -2381,6 +2409,28 @@ private:
 				-20,-10,-10, -5, -5,-10,-10,-20
 			};
 			score += evalTable[toByte(square)];
+		}
+		for (auto delta : queenNKingMoves)
+		{
+			byte newX = x, newY = y;
+			for (byte i = 1; i < 8; i++)
+			{
+				newX += delta.x;
+				newY += delta.y;
+				if (newX < 8 &&
+					newY < 8)
+				{
+					auto piece = board[makeSquare(newX, newY)];
+					if (piece != Piece::EMPTY)
+					{
+						if (get<Color>(piece) != get<Color>(board[square]))
+							score += 2;
+						break;
+					}
+					score += 1;
+				}
+				else break;
+			}
 		}
 		return score;
 	};
