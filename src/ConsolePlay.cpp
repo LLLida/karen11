@@ -307,6 +307,20 @@ bool ConsolePlay::inputMove(Move& move)
 		{
 		    printHistory(std::cout);
 		}
+		else if (s == "eval" || s == "evaluate")
+		{
+			Score score = engine().evaluate();
+			cout << fg::magenta << "Evaluation function returned " << score << ".\n";
+			if (score > 500)
+				cout << fg::cyan << "You're winning :( Please, be gentle.\n";
+			else if (score > 150)
+				cout << fg::green << "You're winning by a small margin, well done!\n";
+			else if (score < -150)
+				cout << fg::yellow << "I'm winning, be aware of me!\n";
+			else if (score < -500)
+				cout << fg::red << "Haha, I just going to beat you!\n";
+			else cout << reset << "We're equal. But I'll beat you soon.\n";
+		}
 		else if (s == "save")
 		{
 			static std::ofstream fout("karen-history.txt");
@@ -645,6 +659,7 @@ commands(type them when Karen asks you to input move):
                              Karen automatically checks whether move is available if you see
                              'Move isn't available' check if your move doesn't cause check for
                              your side.
+    {eval|evaluate}          Gives static evaluation of current position.
     exit                     Exits the program.
 )";
 }
