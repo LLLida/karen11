@@ -96,17 +96,17 @@ inline constexpr bool is_debug = false;
 
 using namespace std::string_literals;
 	
-using byte = uint8_t;
-using sbyte = int8_t;
+	using byte = uint8_t;
+	using sbyte = int8_t;
 /**
  * Converts `value` to byte.
  */
-template<typename T>
-[[nodiscard]]
-inline constexpr byte toByte(T value) noexcept
-{
-	return static_cast<byte>(value);
-}
+	template<typename T>
+	[[nodiscard]]
+	inline constexpr byte toByte(T value) noexcept
+	{
+		return static_cast<byte>(value);
+	}
 
 /**
  * @brief Represents piece's code
@@ -731,7 +731,7 @@ public:
 		board[Square::H8] = Piece::BLACK_ROOK;
 		return board;
 	}
-
+	
 private:
 	Piece data[64];
 };
@@ -903,6 +903,7 @@ public:
 		Color side;
 		GameState game;
 		bool isCheck;
+		unsigned halfMoveNo = 0;
 	};
 
 	static constexpr struct
@@ -1135,6 +1136,7 @@ public:
 				break;
 		}
 		state.side = !state.side;
+		state.halfMoveNo++;
 		
 		return info;
 	}
@@ -1216,6 +1218,7 @@ public:
 				break;
 		}
 		state.enPassantAvailable = info.enPassantAvailable;
+		state.halfMoveNo--;
 	}
 
 	/**
@@ -1429,7 +1432,7 @@ private:
 
 	/**
 	 * @brief Check if square `pos` can be atacked by side - `!side`.
-	 * This function is mainly used for finding checks.
+	 * This function is mainly used for detecting checks.
 	 */
 	[[nodiscard]]
 	bool isAtacked(Square pos, Color side) const
@@ -1560,6 +1563,45 @@ private:
 		}
 		return false;
 	}
+
+	[[nodiscard]]
+	bool shortCastlingAvailable(Color side) const
+	{
+		const Square kingPos = getList(side)->pos;
+		if (!isMoved(board[kingPos]))
+			switch(side)
+			{
+			case Color::WHITE:
+				if (board[Square::H1] == Piece::WHITE_ROOK)
+					return true;
+				break;
+			case Color::BLACK:
+				if (board[Square::H8] == Piece::BLACK_ROOK)
+					return true;
+				break;
+			}
+		return false;
+	}
+
+	[[nodiscard]]
+	bool longCastlingAvailable(Color side) const
+	{
+		const Square kingPos = getList(side)->pos;
+		if (!isMoved(board[kingPos]))
+			switch(side)
+			{
+				case Color::WHITE:
+					if (board[Square::A1] == Piece::WHITE_ROOK)
+						return true;
+					break;
+				case Color::BLACK:
+					if (board[Square::A8] == Piece::BLACK_ROOK)
+						return true;
+					break;
+			}
+		return false;
+	}
+
 	
 	/**
 	 * @brief Writes all available captures of current side to `moves`.
@@ -2471,6 +2513,7 @@ public:
 		}
 		return bestMove;
 	}
+
 }; /* class Engine */
 
 /**
@@ -2561,8 +2604,8 @@ public:
 
 			if (karen.isCheckMate())
 			{
-				if (side == playerSide) win();
-				else gameOver();
+				if (side == playerSide) gameOver();
+				else win();
 				return (side == Color::WHITE) ? Result::BLACK_WON : Result::WHITE_WON;
 			}
 			if (karen.isStaleMate())
