@@ -258,8 +258,8 @@ bool ConsolePlay::inputMove(Move& move)
 	auto moves = engine().availableMoves(true);
 	while (true)
 	{
-		std::string s = {};
-		while (s.size() == 0)
+		std::string s{};
+		while (s.empty())
 		{
 			cout << fg::cyan << "Input your move:" << fg::green << ' ';
 			std::getline(cin, s);
@@ -273,7 +273,7 @@ bool ConsolePlay::inputMove(Move& move)
 		if (s == "exit")
 		{
 			static const std::string_view messages[] = {
-				"Dont' let me alone!\n"sv,
+				"Don't let me alone!\n"sv,
 				"I won :D\n"sv,
 				"Are you're afraid of me?\n"sv,
 			};
