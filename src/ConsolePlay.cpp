@@ -318,7 +318,7 @@ bool ConsolePlay::inputMove(Move& move)
 			else if (score < -150)
 				cout << fg::yellow << "I'm winning, be aware of me!\n";
 			else if (score < -500)
-				cout << fg::red << "Haha, I just going to beat you!\n";
+				cout << fg::red << "Haha, I'm just going to beat you!\n";
 			else cout << reset << "We're equal. But I'll beat you soon.\n";
 		}
 		else if (s == "save")
