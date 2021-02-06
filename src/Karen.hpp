@@ -37,13 +37,13 @@
 #  define KAREN_ENABLE_ASSERTIONS
 # endif
 	
-#endif
-	
 #ifdef KAREN_ENABLE_ASSERTIONS
 #define KAREN_ASSERT(cond, message)										\
 	if (!(cond)) { karen11::detail::reportAssertion(message, __LINE__, __FUNCTION__); }
 #else
 #define KAREN_ASSERT(cond, message)
+#endif
+
 #endif
 
 #define KAREN_OVERLOAD_ENUM_BIN_OPERATOR(op, type)						\
@@ -2121,24 +2121,34 @@ public:
 
 		/* Bonus for the bishop pair */
 		if (whiteCount[toByte(Code::BISHOP)] > 1)
-			score += 30;
+			score += 24;
 		if (blackCount[toByte(Code::BISHOP)] > 1)
-			score -= 30;
+			score -= 24;
 
 		/* Penalty for having no pawns, as it makes it more difficult to win the endgame */
 		if (whiteCount[toByte(Code::PAWN)] == 0)
 			score -= 50;
 		if (blackCount[toByte(Code::PAWN)] == 0)
 			score += 50;
+
+		/* Penalty if castling is not available */
+		if (!shortCastlingAvailable(Color::WHITE))
+			score -= 25;
+		if (!longCastlingAvailable(Color::WHITE))
+			score -= 23;
+		if (!shortCastlingAvailable(Color::BLACK))
+			score += 25;
+		if (!longCastlingAvailable(Color::BLACK))
+			score += 23;
 		
 		/* Knights lose value as pawns disappear. */
 		score += (whiteCount[toByte(Code::KNIGHT)] * whiteCount[toByte(Code::PAWN)]) << 1;
 		score -= (blackCount[toByte(Code::KNIGHT)] * blackCount[toByte(Code::PAWN)]) << 1;
 
 		if (whiteCheck)
-			score -= 15;
+			score -= 12;
 		if (blackCheck)
-			score += 15;
+			score += 12;
 
 		if (state.side == Color::BLACK) score = -score;
 		return score;
@@ -2364,8 +2374,11 @@ private:
 						if (get<Color>(piece) != get<Color>(board[square]))
 							score += 2;
 						/* Rooks defending each other */
-						else if (isRook(piece))
+						else if (isRook(piece) || isQueen(piece))
+						{
 							score += 4;
+							break;
+						}
 						break;
 					}
 					score += 1;
@@ -2528,8 +2541,8 @@ public:
 		bool moved = false;
 		const Color us = state.side;
 		
-		Score alpha = -INF;
-		Score beta = INF;
+		Score alpha = -INF * 2;
+		Score beta = INF * 2;
 		Move bestMove = makeMove(Square::A1, Square::A1);
 
 		std::sort(moves.begin(), moves.end(), std::greater{}); /* Because we're iterating over
