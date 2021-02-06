@@ -2121,9 +2121,9 @@ public:
 
 		/* Bonus for the bishop pair */
 		if (whiteCount[toByte(Code::BISHOP)] > 1)
-			score += 24;
+			score += 18;
 		if (blackCount[toByte(Code::BISHOP)] > 1)
-			score -= 24;
+			score -= 18;
 
 		/* Penalty for having no pawns, as it makes it more difficult to win the endgame */
 		if (whiteCount[toByte(Code::PAWN)] == 0)
@@ -2179,7 +2179,7 @@ private:
 			if (isWhitePawn(board[makeSquare(x, y - 1)]))
 				score -= 5;
 			if (board[makeSquare(x, y + 1)] != Piece::EMPTY)
-				score -= 5;
+				score -= 4;
 			if (x != 0 && isBlack(board[makeSquare(x - 1, y + 1)]))
 				score += toByte(get<Code>(board[makeSquare(x - 1, y + 1)])) + 2;
 			if (x < 7 && isBlack(board[makeSquare(x + 1, y + 1)]))
@@ -2201,7 +2201,7 @@ private:
 			if (isBlackPawn(board[makeSquare(x, y + 1)]))
 				score -= 5;
 			if (board[makeSquare(x, y - 1)] != Piece::EMPTY)
-				score -= 6;
+				score -= 4;
 			if (x != 0 && isWhite(board[makeSquare(x - 1, y + 1)]))
 				score += toByte(get<Code>(board[makeSquare(x - 1, y + 1)])) + 2;
 			if (x < 7 && isWhite(board[makeSquare(x + 1, y + 1)]))
@@ -2375,10 +2375,7 @@ private:
 							score += 2;
 						/* Rooks defending each other */
 						else if (isRook(piece) || isQueen(piece))
-						{
 							score += 4;
-							break;
-						}
 						break;
 					}
 					score += 1;
