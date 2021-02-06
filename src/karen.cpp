@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 	if (ConsolePlay::parseOptions(argc, argv))
 		return 0;
 	ConsolePlay play;
-	play();
+	play(9);
 
 	return 0;
 }
