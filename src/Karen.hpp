@@ -78,12 +78,17 @@
 
 namespace karen11
 {
+	class Error : public std::runtime_error
+	{
+		Error(const std::string& message, int line, const char* func)
+			: std::runtime_error(std::string(func) + ": " + std::to_string(line) + ": " + message) {}
+	};
 #ifdef KAREN_ENABLE_ASSERTIONS
 namespace detail
 {
 	inline void reportAssertion(const std::string& message, int line, const char* func)
 	{
-		throw std::runtime_error(std::string(func) + ": " + std::to_string(line) + ": " + message);
+		throw Error(message, line, func);
 	}
 }
 #endif
