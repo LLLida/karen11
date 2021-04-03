@@ -3,6 +3,8 @@ project(karen VERSION 1.1 LANGUAGES C CXX)
 include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
+set(default_build_type "Release")
+
 # Use C++17 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
