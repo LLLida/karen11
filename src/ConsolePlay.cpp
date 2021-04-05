@@ -33,7 +33,7 @@ using namespace std::literals;
 #if defined(KAREN_ALWAYS_COLORED) || defined(__linux__) || defined(__linux) || defined(_WIN32)
 bool ConsolePlay::colored = true;
 #else
-	bool ConsolePlay::colored = false;
+bool ConsolePlay::colored = false;
 #endif
 
 #if defined(KAREN_ALWAYS_COLORED) || defined(__linux__) || defined(__linux) || defined(_WIN32)
