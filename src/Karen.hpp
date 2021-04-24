@@ -80,6 +80,7 @@ namespace karen11
 {
 	class Error : public std::runtime_error
 	{
+	public:
 		Error(const std::string& message, int line, const char* func)
 			: std::runtime_error(std::string(func) + ": " + std::to_string(line) + ": " + message) {}
 	};
